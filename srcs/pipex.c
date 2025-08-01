@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:17:01 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/01 15:13:40 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/01 15:21:23 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@ void	child_prcs(int *fd, char **argv, char **envp)
 	in_file = open(argv[1], O_RDONLY, 0777);
 }
 
-
-
 int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
@@ -38,6 +36,8 @@ int	main(int argc, char **argv, char **envp)
 	if (pipe(fd) == -1)
 		exit(-1);
 	pid = fork();
+}
+
 	// open file1
 	// open or create file 2
 	// create pipe
@@ -47,4 +47,3 @@ int	main(int argc, char **argv, char **envp)
 	// execute up to n cmds
 	// close pipe/waits
 	// cleanup/exit
-}
