@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 12:48:40 by nweber            #+#    #+#             */
-/*   Updated: 2025/07/24 10:07:12 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/01 15:19:12 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
+void	ft_array_free(char **array);
 double	ft_atof(const char *str);
 
 t_list	*ft_lstnew(void *content);
