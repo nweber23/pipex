@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:54:03 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/01 15:28:28 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/01 19:29:55 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,45 @@ void	exit_handling(void)
 
 char	*ft_getenv(char *name, char **envp)
 {
+	int		i;
+	int		j;
+	char	*env;
 
+	i = 0;
+	while (envp[i])
+	{
+		j = 0;
+		while (envp[i][j] && envp[i][j] != '=')
+			j++;
+		env = ft_substr(envp[i], 0, j);
+		if (ft_strcmp(env, name) == 0)
+			return (free(env), envp[i] + j + 1);
+		free(env);
+		i++;
+	}
+	return (NULL);
 }
 
 char	*getpath(char *cmd, char **envp)
 {
+	int		i;
+	char	*path;
+	char	**all_paths;
+	char	*execution;
+	char	**all_cmds;
 
+	i = -1;
+	all_paths = ft_split(ft_getenv("PATH", envp), ':');
+	all_cmds = ft_split(cmd, ' ');
+	while (all_paths[++i])
+	{
+		path = ft_strjoin(all_paths[i], "/");
+		execution = ft_strjoin(path, all_cmds[0]);
+		free(path);
+		if (access(execution, F_OK | X_OK) == 0)
+			return (ft_array_free(all_paths), execution);
+
+	}
 }
 
 void	execution(char *cmd, char **envp)

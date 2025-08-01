@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:17:01 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/01 15:21:23 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/01 15:59:21 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,15 @@ void	parent_prcs(int *fd, char **argv, char **envp)
 	int	out_file;
 
 	out_file = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (out_file < 0)
+	{
+		perror("Error opening output file");
+		exit(EXIT_FAILURE);
+	}
+	dup2(out_file, 1);
+	dup2(fd[0], 0);
+	close(fd[1]);
+	execution(argv[3], envp);
 }
 
 void	child_prcs(int *fd, char **argv, char **envp)
@@ -24,6 +33,15 @@ void	child_prcs(int *fd, char **argv, char **envp)
 	int	in_file;
 
 	in_file = open(argv[1], O_RDONLY, 0777);
+	if (in_file < 0)
+	{
+		perror("Error opening input file");
+		exit(EXIT_FAILURE);
+	}
+	dup2(in_file, 0);
+	dup2(fd[1], 1);
+	close(fd[0]);
+	execution(argv[2], envp);
 }
 
 int	main(int argc, char **argv, char **envp)
