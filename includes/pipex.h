@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:00:21 by nweber            #+#    #+#             */
-/*   Updated: 2025/07/31 16:25:33 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/01 15:14:13 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,8 @@
 # include <stdbool.h>
 # include <fcntl.h>
 # include <sys/wait.h>
+
+// Utils
+void	exit_handling(void);
 
 #endif
