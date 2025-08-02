@@ -6,17 +6,11 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:54:03 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/01 19:29:55 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/02 09:39:02 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void	exit_handling(void)
-{
-	ft_printf("Usage: ./pipex <file1> <cmd1> <cmd2> <file2>\n");
-	exit(0);
-}
 
 char	*ft_getenv(char *name, char **envp)
 {
@@ -57,11 +51,25 @@ char	*getpath(char *cmd, char **envp)
 		free(path);
 		if (access(execution, F_OK | X_OK) == 0)
 			return (ft_array_free(all_paths), execution);
-
+		free(execution);
 	}
+	ft_array_free(all_paths);
+	ft_array_free(all_cmds);
+	return (ft_strdup(cmd));
 }
 
 void	execution(char *cmd, char **envp)
 {
+	char	**all_cmds;
+	char	*path;
 
+	all_cmds = ft_split(cmd, ' ');
+	path = getpath(all_cmds[0], envp);
+	if (execve(path, all_cmds, envp) == -1)
+	{
+		perror("Error executing command");
+		ft_array_free(all_cmds);
+		free(path);
+		exit(EXIT_FAILURE);
+	}
 }

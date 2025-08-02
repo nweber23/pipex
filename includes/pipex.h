@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:00:21 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/01 15:29:04 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/02 09:35:04 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,10 @@
 # include <sys/wait.h>
 
 // Utils
-void	exit_handling(void);
 void	execution(char *cmd, char **envp);
 char	*getpath(char *cmd, char **envp);
 char	*ft_getenv(char *name, char **envp);
+void	child_prcs(int *fd, char **argv, char **envp);
+void	parent_prcs(int *fd, char **argv, char **envp);
 
 #endif

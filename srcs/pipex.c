@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:17:01 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/01 15:59:21 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/02 09:35:20 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,21 @@ int	main(int argc, char **argv, char **envp)
 	pid_t	pid;
 
 	if (argc != 5)
-		exit_handling();
+	{
+		ft_printf("Usage: ./pipex <file1> <cmd1> <cmd2> <file2>\n");
+		exit(0);
+	}
 	if (pipe(fd) == -1)
 		exit(-1);
 	pid = fork();
+	if (pid == -1)
+	{
+		perror("Fork failed");
+		exit(EXIT_FAILURE);
+	}
+	if (!pid)
+		child_prcs(fd, argv, envp);
+	parent_prcs(fd, argv, envp);
 }
 
 	// open file1
