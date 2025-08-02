@@ -1,7 +1,9 @@
 NAME = pipex
 SRC = srcs/pipex.c srcs/utils.c
+BONUS_SRC = srcs/pipex_bonus.c srcs/utils_bonus.c
 OBJ_DIR = objs
 OBJ = $(SRC:srcs/%.c=$(OBJ_DIR)/%.o)
+BONUS_OBJ = $(BONUS_SRC:srcs/%.c=$(OBJ_DIR)/%.o)
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I./includes/ -I./libft/includes/
 
@@ -33,4 +35,7 @@ re:
 	$(MAKE) fclean
 	$(MAKE) all
 
-.PHONY: all clean fclean re
+bonus: ${OBJ} ${BONUS_OBJ}
+	ar rcs ${NAME} ${OBJ} ${BONUS_OBJ}
+
+.PHONY: all clean fclean re bonus
