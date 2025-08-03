@@ -6,73 +6,64 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:17:01 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/02 12:45:55 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/03 10:13:26 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	parent_prcs(int *fd, char **argv, char **envp)
+static char	**setup_environment(char **envp, bool *use_default_env)
 {
-	int	out_file;
+	char	**default_envp;
 
-	out_file = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0664);
-	if (out_file < 0)
+	*use_default_env = false;
+	if (!envp || !*envp)
 	{
-		perror("Error opening output file");
-		exit(EXIT_FAILURE);
+		default_envp = default_env();
+		if (!default_envp)
+			exit(EXIT_FAILURE);
+		*use_default_env = true;
+		return (default_envp);
 	}
-	dup2(out_file, 1);
-	dup2(fd[0], 0);
-	close(fd[1]);
-	execution(argv[3], envp);
+	return (envp);
 }
 
-void	child_prcs(int *fd, char **argv, char **envp)
+static void	cleanup_and_exit(char **envp, bool use_default_env, int exit_code)
 {
-	int	in_file;
+	if (use_default_env)
+		ft_array_free(envp);
+	exit(exit_code);
+}
 
-	in_file = open(argv[1], O_RDONLY);
-	if (in_file < 0)
+static void	create_pipe_and_fork(int *fd, pid_t *pid,
+	char **envp, bool use_default_env)
+{
+	if (pipe(fd) == -1)
+		cleanup_and_exit(envp, use_default_env, -1);
+	*pid = fork();
+	if (*pid == -1)
 	{
-		perror("Error opening input file");
-		exit(EXIT_FAILURE);
+		perror("Fork failed");
+		cleanup_and_exit(envp, use_default_env, EXIT_FAILURE);
 	}
-	dup2(in_file, 0);
-	dup2(fd[1], 1);
-	close(fd[0]);
-	execution(argv[2], envp);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
 	pid_t	pid;
+	char	**final_envp;
+	bool	use_default_env;
 
 	if (argc != 5)
 	{
 		ft_printf("Usage: ./pipex <file1> <cmd1> <cmd2> <file2>\n");
 		exit(0);
 	}
-	if (pipe(fd) == -1)
-		exit(-1);
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("Fork failed");
-		exit(EXIT_FAILURE);
-	}
+	final_envp = setup_environment(envp, &use_default_env);
+	create_pipe_and_fork(fd, &pid, final_envp, use_default_env);
 	if (!pid)
-		child_prcs(fd, argv, envp);
-	parent_prcs(fd, argv, envp);
+		child_prcs(fd, argv, final_envp);
+	parent_prcs(fd, argv, final_envp);
+	cleanup_and_exit(final_envp, use_default_env, 0);
 }
-
-	// open file1
-	// open or create file 2
-	// create pipe
-	// fork cmd1
-	// fork cmd2
-	// fork n cmds
-	// execute up to n cmds
-	// close pipe/waits
-	// cleanup/exit

@@ -6,11 +6,26 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:54:03 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/02 09:39:02 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/03 10:01:22 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+char	**default_env(void)
+{
+	char	**envp;
+
+	envp = malloc(2 * sizeof(char *));
+	if (!envp)
+		return (NULL);
+	envp[0] = ft_strdup("PATH=/usr/local/sbin:/usr/local/\
+		bin:/usr/sbin:/usr/bin:/sbin:/bin");
+	if (!envp[0])
+		return (free(envp), NULL);
+	envp[1] = NULL;
+	return (envp);
+}
 
 char	*ft_getenv(char *name, char **envp)
 {
@@ -50,12 +65,13 @@ char	*getpath(char *cmd, char **envp)
 		execution = ft_strjoin(path, all_cmds[0]);
 		free(path);
 		if (access(execution, F_OK | X_OK) == 0)
-			return (ft_array_free(all_paths), execution);
+			return (ft_array_free(all_paths),
+				ft_array_free(all_cmds), execution);
 		free(execution);
 	}
 	ft_array_free(all_paths);
 	ft_array_free(all_cmds);
-	return (ft_strdup(cmd));
+	return (NULL);
 }
 
 void	execution(char *cmd, char **envp)
@@ -65,6 +81,14 @@ void	execution(char *cmd, char **envp)
 
 	all_cmds = ft_split(cmd, ' ');
 	path = getpath(all_cmds[0], envp);
+	if (!path)
+	{
+		ft_putstr_fd("pipex: ", STDERR_FILENO);
+		ft_putstr_fd(all_cmds[0], STDERR_FILENO);
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+		ft_array_free(all_cmds);
+		exit(127);
+	}
 	if (execve(path, all_cmds, envp) == -1)
 	{
 		perror("Error executing command");

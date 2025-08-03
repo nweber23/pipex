@@ -1,5 +1,5 @@
 NAME = pipex
-SRC = srcs/pipex.c srcs/utils.c
+SRC = srcs/pipex.c srcs/utils.c srcs/processing.c
 BONUS_SRC = srcs/pipex_bonus.c srcs/utils_bonus.c
 OBJ_DIR = objs
 OBJ = $(SRC:srcs/%.c=$(OBJ_DIR)/%.o)
@@ -35,7 +35,7 @@ re:
 	$(MAKE) fclean
 	$(MAKE) all
 
-bonus: ${OBJ} ${BONUS_OBJ}
-	ar rcs ${NAME} ${OBJ} ${BONUS_OBJ}
+#bonus: ${OBJ} ${BONUS_OBJ}
+#	ar rcs ${NAME} ${OBJ} ${BONUS_OBJ}
 
 .PHONY: all clean fclean re bonus
