@@ -1,5 +1,5 @@
 NAME = pipex
-SRC = srcs/pipex.c srcs/utils.c srcs/processing.c
+SRC = srcs/pipex.c srcs/utils.c srcs/processing.c srcs/execution.c
 BONUS_SRC = srcs/pipex_bonus.c srcs/utils_bonus.c
 OBJ_DIR = objs
 OBJ = $(SRC:srcs/%.c=$(OBJ_DIR)/%.o)
