@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:54:03 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/03 10:01:22 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/03 10:28:14 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,17 @@ void	execution(char *cmd, char **envp)
 	char	**all_cmds;
 	char	*path;
 
-	all_cmds = ft_split(cmd, ' ');
-	path = getpath(all_cmds[0], envp);
+	all_cmds = malloc(4 * sizeof(char *));
+	if (!all_cmds)
+		exit(EXIT_FAILURE);
+	all_cmds[0] = ft_strdup("sh");
+	all_cmds[1] = ft_strdup("-c");
+	all_cmds[2] = ft_strdup(cmd);
+	all_cmds[3] = NULL;
+	path = getpath("sh", envp);
 	if (!path)
 	{
-		ft_putstr_fd("pipex: ", STDERR_FILENO);
-		ft_putstr_fd(all_cmds[0], STDERR_FILENO);
-		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+		ft_putstr_fd("pipex: sh: command not found\n", STDERR_FILENO);
 		ft_array_free(all_cmds);
 		exit(127);
 	}
