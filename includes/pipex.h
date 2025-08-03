@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 15:00:21 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/03 09:31:58 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/03 11:21:48 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@ char	*ft_getenv(char *name, char **envp);
 void	child_prcs(int *fd, char **argv, char **envp);
 void	parent_prcs(int *fd, char **argv, char **envp);
 char	**default_env(void);
+int		is_shell_script(char *cmd);
 
 #endif

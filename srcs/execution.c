@@ -6,35 +6,11 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:06:23 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/03 11:08:02 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/03 13:06:10 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-static int	is_shell_script(char *cmd)
-{
-	int		fd;
-	char	buffer[3];
-	int		bytes_read;
-
-	if (ft_strchr(cmd, '/') || (cmd[0] == '.' && cmd[1] == '/'))
-	{
-		if (access(cmd, F_OK | X_OK) == 0)
-		{
-			fd = open(cmd, O_RDONLY);
-			if (fd != -1)
-			{
-				bytes_read = read(fd, buffer, 2);
-				close(fd);
-				if (bytes_read == 2 && buffer[0] == '#' && buffer[1] == '!')
-					return (1);
-			}
-			return (1);
-		}
-	}
-	return (0);
-}
 
 static void	execute_script(char *cmd, char **envp)
 {
@@ -45,19 +21,19 @@ static void	execute_script(char *cmd, char **envp)
 	{
 		if (execve(all_cmds[0], all_cmds, envp) == -1)
 		{
-			perror("Error executing script");
+			ft_putstr_fd("pipex: ", STDERR_FILENO);
+			ft_putstr_fd(all_cmds[0], STDERR_FILENO);
+			ft_putstr_fd(": command not found\n", STDERR_FILENO);
 			ft_array_free(all_cmds);
-			exit(EXIT_FAILURE);
+			exit(127);
 		}
 	}
 	ft_array_free(all_cmds);
-	exit(EXIT_FAILURE);
 }
 
-static void	execute_command(char *cmd, char **envp)
+static char	**prepare_shell_command(char *cmd)
 {
 	char	**all_cmds;
-	char	*path;
 
 	all_cmds = malloc(4 * sizeof(char *));
 	if (!all_cmds)
@@ -66,6 +42,40 @@ static void	execute_command(char *cmd, char **envp)
 	all_cmds[1] = ft_strdup("-c");
 	all_cmds[2] = ft_strdup(cmd);
 	all_cmds[3] = NULL;
+	return (all_cmds);
+}
+
+static void	check_command_exists(char *cmd, char **envp)
+{
+	char	**cmd_parts;
+	char	*cmd_name;
+
+	cmd_parts = ft_split(cmd, ' ');
+	if (!cmd_parts || !cmd_parts[0])
+	{
+		if (cmd_parts)
+			ft_array_free(cmd_parts);
+		return ;
+	}
+	cmd_name = cmd_parts[0];
+	if (!getpath(cmd_name, envp) && !ft_strchr(cmd_name, '/'))
+	{
+		ft_putstr_fd("pipex: ", STDERR_FILENO);
+		ft_putstr_fd(cmd_name, STDERR_FILENO);
+		ft_putstr_fd(": command not found\n", STDERR_FILENO);
+		ft_array_free(cmd_parts);
+		exit(127);
+	}
+	ft_array_free(cmd_parts);
+}
+
+static void	execute_command(char *cmd, char **envp)
+{
+	char	**all_cmds;
+	char	*path;
+
+	check_command_exists(cmd, envp);
+	all_cmds = prepare_shell_command(cmd);
 	path = getpath("sh", envp);
 	if (!path)
 	{

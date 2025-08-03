@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:54:03 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/03 11:06:12 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/03 11:21:41 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,28 @@ char	*getpath(char *cmd, char **envp)
 	ft_array_free(all_paths);
 	ft_array_free(all_cmds);
 	return (NULL);
+}
+
+int	is_shell_script(char *cmd)
+{
+	int		fd;
+	char	buffer[3];
+	int		bytes_read;
+
+	if (ft_strchr(cmd, '/') || (cmd[0] == '.' && cmd[1] == '/'))
+	{
+		if (access(cmd, F_OK | X_OK) == 0)
+		{
+			fd = open(cmd, O_RDONLY);
+			if (fd != -1)
+			{
+				bytes_read = read(fd, buffer, 2);
+				close(fd);
+				if (bytes_read == 2 && buffer[0] == '#' && buffer[1] == '!')
+					return (1);
+			}
+			return (1);
+		}
+	}
+	return (0);
 }
