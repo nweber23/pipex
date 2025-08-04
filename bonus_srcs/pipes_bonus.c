@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:48:37 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/04 12:09:31 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/04 13:50:13 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,17 +64,18 @@ void	handle_last(int **pipes, char **argv, char **envp, int cmd_index)
 	execution(argv[cmd_index + 2], envp);
 }
 
-static void	handle_helper(int **pipes, char **argv,
+static int	handle_helper(int **pipes, char **argv,
 		char **envp, int num_commands)
 {
 	int		i;
 	pid_t	*pids;
+	int		exit_code;
 
 	pids = malloc(num_commands * sizeof(pid_t));
 	if (!pids)
-		return ;
-	i = 0;
-	while (i < num_commands)
+		return (1);
+	i = -1;
+	while (++i < num_commands)
 	{
 		pids[i] = fork();
 		if (pids[i] == 0)
@@ -86,21 +87,22 @@ static void	handle_helper(int **pipes, char **argv,
 			else
 				handle_middle(pipes, argv, envp, i);
 		}
-		i++;
 	}
 	close_pipes(pipes, num_commands - 1);
-	wait_children(pids, num_commands);
+	exit_code = wait_children(pids, num_commands);
 	free(pids);
+	return (exit_code);
 }
 
-void	handling(char **argv, char **envp, int num_commands)
+int	handling(char **argv, char **envp, int num_commands)
 {
 	int		**pipes;
 	int		i;
+	int		exit_code;
 
 	pipes = malloc((num_commands - 1) * sizeof(int *));
 	if (!pipes)
-		return ;
+		return (1);
 	i = 0;
 	while (i < num_commands - 1)
 	{
@@ -109,6 +111,13 @@ void	handling(char **argv, char **envp, int num_commands)
 			exit(EXIT_FAILURE);
 		i++;
 	}
-	handle_helper(pipes, argv, envp, num_commands);
+	exit_code = handle_helper(pipes, argv, envp, num_commands);
+	i = 0;
+	while (i < num_commands - 1)
+	{
+		free(pipes[i]);
+		i++;
+	}
 	free(pipes);
+	return (exit_code);
 }

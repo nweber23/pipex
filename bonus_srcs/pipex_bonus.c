@@ -6,7 +6,7 @@
 /*   By: nweber <nweber@student.42Heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 14:53:53 by nweber            #+#    #+#             */
-/*   Updated: 2025/08/04 12:09:13 by nweber           ###   ########.fr       */
+/*   Updated: 2025/08/04 13:48:41 by nweber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	main(int argc, char **argv, char **envp)
 	char	**final_envp;
 	bool	use_default_env;
 	int		num_commands;
+	int		exit_code;
 
 	if (argc < 5)
 	{
@@ -48,6 +49,6 @@ int	main(int argc, char **argv, char **envp)
 	}
 	num_commands = argc - 3;
 	final_envp = setup_environment(envp, &use_default_env);
-	handling(argv, final_envp, num_commands);
-	cleanup_and_exit(final_envp, use_default_env, 0);
+	exit_code = handling(argv, final_envp, num_commands);
+	cleanup_and_exit(final_envp, use_default_env, exit_code);
 }
