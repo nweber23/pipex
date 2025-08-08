@@ -17,14 +17,14 @@ all: $(LIBFT) $(NAME)
 $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
 
-$(OBJ_DIR)/%.o: srcs/%.c includes/*.h
+$(OBJ_DIR)/%.o: srcs/%.c includes/pipex.h
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 bonus: $(LIBFT) $(BONUS_OBJ)
 	$(CC) $(CFLAGS) $(BONUS_OBJ) $(LIBFT) -o $(NAME)
 
-$(BONUS_OBJ_DIR)/%.o: bonus_srcs/%.c includes/*.h
+$(BONUS_OBJ_DIR)/%.o: bonus_srcs/%.c includes/pipex_bonus.h
 	@mkdir -p $(BONUS_OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
