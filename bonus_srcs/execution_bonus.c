@@ -39,8 +39,23 @@ static char	**prepare_shell_command(char *cmd)
 	if (!all_cmds)
 		exit(EXIT_FAILURE);
 	all_cmds[0] = ft_strdup("sh");
+	if (!all_cmds[0])
+	{
+		ft_array_free(all_cmds);
+		exit(EXIT_FAILURE);
+	}
 	all_cmds[1] = ft_strdup("-c");
+	if (!all_cmds[1])
+	{
+		ft_array_free(all_cmds);
+		exit(EXIT_FAILURE);
+	}
 	all_cmds[2] = ft_strdup(cmd);
+	if (!all_cmds[2])
+	{
+		ft_array_free(all_cmds);
+		exit(EXIT_FAILURE);
+	}
 	all_cmds[3] = NULL;
 	return (all_cmds);
 }
